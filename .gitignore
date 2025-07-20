@@ -1,0 +1,11 @@
+# Ignorar tudo dentro da pasta style
+/datasets/style/*
+
+# Manter o .gitkeep para a pasta style (para garantir que a pasta seja versionada mesmo vazia)
+!/datasets/style/.gitkeep
+
+# Pode fazer o mesmo para content, se quiser
+/datasets/content/*
+!/datasets/content/.gitkeep
+
+tf-env
