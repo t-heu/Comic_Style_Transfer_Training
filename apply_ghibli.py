@@ -3,7 +3,7 @@ import numpy as np
 from PIL import Image
 
 IMG_SIZE = 256
-INPUT = 'test_input.jpg'
+INPUT = 'content.jpg'
 OUTPUT = 'test_output.jpg'
 
 def load_img(path):

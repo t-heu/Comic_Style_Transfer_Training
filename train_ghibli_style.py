@@ -1,5 +1,6 @@
 import tensorflow as tf
 from tensorflow.keras import layers, Model
+from tensorflow.keras.applications.vgg19 import preprocess_input
 import numpy as np
 from PIL import Image
 import os
@@ -10,8 +11,12 @@ STYLE_IMAGE = 'datasets/style/style.png'
 IMG_SIZE = 256
 BATCH_SIZE = 4
 EPOCHS = 50
-CONTENT_WEIGHT = 1e4
-STYLE_WEIGHT = 1e-2
+CONTENT_WEIGHT = 1.0
+STYLE_WEIGHT = 10.0
+
+def preprocess_vgg(x):
+    x = x * 255.0  # converte de [0,1] para [0,255]
+    return preprocess_input(x)
 
 # === Data Loading ===
 def load_img(path):
@@ -49,10 +54,13 @@ def transformer():
 
 # === Funções auxiliares ===
 def gram_matrix(x):
-    x = tf.transpose(x, perm=[0, 3, 1, 2])
-    b, c, h, w = x.shape
-    features = tf.reshape(x, (b, c, h*w))
-    gram = tf.matmul(features, features, transpose_b=True) / tf.cast(c*h*w, tf.float32)
+    x = tf.transpose(x, perm=[0, 3, 1, 2])  # b, c, h, w
+    b = tf.shape(x)[0]
+    c = tf.shape(x)[1]
+    h = tf.shape(x)[2]
+    w = tf.shape(x)[3]
+    features = tf.reshape(x, (b, c, h * w))
+    gram = tf.matmul(features, features, transpose_b=True) / tf.cast(h * w * c, tf.float32)
     return gram
 
 # === Extrator VGG19 ===
@@ -65,7 +73,7 @@ vgg_model = Model(vgg.input, outputs)
 
 # Pré-compute estilo
 style_img = load_img(STYLE_IMAGE)[np.newaxis]
-style_outputs = vgg_model(style_img)
+style_outputs = vgg_model(preprocess_vgg(style_img))
 style_targets = [gram_matrix(s) for s in style_outputs[:len(style_layers)]]
 
 # === Treinamento ===
@@ -75,15 +83,26 @@ opt = tf.optimizers.Adam(learning_rate=1e-3)
 @tf.function
 def train_step(content_batch):
     with tf.GradientTape() as tape:
-        out = transform_net(content_batch)
-        out_vgg = vgg_model(out)
+        out = transform_net(content_batch)                        # gera a imagem estilizada (0..1)
+        
+        # Pré-processa antes de enviar pro VGG (espera imagens no formato correto)
+        out_vgg = vgg_model(preprocess_vgg(out))                 
         style_out = out_vgg[:len(style_layers)]
         content_out = out_vgg[len(style_layers):]
+        
+        # Extrai features do conteúdo original também pré-processado
+        content_features = vgg_model(preprocess_vgg(content_batch))[-1]
 
-        style_loss = tf.add_n([tf.reduce_mean((gram_matrix(o)-t)**2)
-                               for o,t in zip(style_out, style_targets)])
-        content_loss = tf.reduce_mean((content_out[0] - vgg_model(content_batch)[-1])**2)
-        loss = STYLE_WEIGHT*style_loss + CONTENT_WEIGHT*content_loss
+        # Calcula as perdas usando gram_matrix corrigida
+        style_loss = tf.add_n([
+            tf.reduce_mean(tf.square(gram_matrix(o) - t)) 
+            for o, t in zip(style_out, style_targets)
+        ])
+        
+        content_loss = tf.reduce_mean(tf.square(content_out[0] - content_features))
+        
+        # Aplica os pesos ajustados
+        loss = STYLE_WEIGHT * style_loss + CONTENT_WEIGHT * content_loss
 
     grads = tape.gradient(loss, transform_net.trainable_variables)
     opt.apply_gradients(zip(grads, transform_net.trainable_variables))
