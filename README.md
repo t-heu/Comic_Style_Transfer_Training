@@ -21,13 +21,17 @@ pip install tensorflow tensorflowjs pillow numpy
 2. Treine o modelo:
 
 ```bash
-python train.py
+python train.py 
+# 
+python train_ghibli_style.py
 ```
 
 3. Teste uma imagem de exemplo:
 
 ```bash
 python test_image.py
+# 
+python apply_ghibli.py
 ```
 
 4. Exporte para TensorFlow.js:

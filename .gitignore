@@ -8,4 +8,5 @@
 /datasets/content/*
 !/datasets/content/.gitkeep
 
+test_output.jpg
 tf-env
