@@ -1,43 +1,108 @@
+# 🎨 Fast Style Transfer
 
-# Gibi Style Transfer
+Transferência de estilo neural em tempo real com TensorFlow.
 
-Treinamento simples de transferência de estilo para transformar imagens comuns em estilo GIBI (HQ, gibi, quadrinhos).
+Inspirado no paper **Perceptual Losses for Real-Time Style Transfer and Super-Resolution** (Johnson et al.).
 
-## Estrutura
+---
 
-- `datasets/content/` → imagens normais
-- `datasets/style/` → imagens com estilo gibi
-- `models/` → onde os modelos salvos e exportados ficarão
+## ✅ Requisitos
 
-## Instalação
+- Python **3.10**
+- Ambiente virtual recomendado
+- TensorFlow **1.15**
+- Outras dependências: `numpy`, `scipy`, `imageio`, `pillow`, `moviepy`
 
-```bash
-pip install tensorflow tensorflowjs pillow numpy
-```
+---
 
-## Como usar
+## ⚙️ Instalação
 
-1. Coloque imagens nas pastas `datasets/content/` e `datasets/style/`
-2. Treine o modelo:
-
-```bash
-python train.py 
-# 
-python train_ghibli_style.py
-```
-
-3. Teste uma imagem de exemplo:
+### 1. Verifique a versão do Python
 
 ```bash
-python test_image.py
-# 
-python apply_ghibli.py
-```
+py -3.10 --version
+````
 
-4. Exporte para TensorFlow.js:
+### 2. Crie e ative o ambiente virtual
 
 ```bash
-python export_tfjs.py
+py -3.10 -m venv venv
+venv\Scripts\activate   # Windows v1
+source venv/Scripts/activate # Windows v2
+# ou
+source venv/bin/activate  # macOS/Linux
 ```
 
-Resultado final estará em `models/gibi_tfjs/` com `model.json` e `.bin`.
+### 3. Instale as dependências
+
+```bash
+pip install tensorflow==1.15 numpy scipy imageio pillow moviepy
+# or
+python -m pip install tensorflow numpy scipy imageio pillow moviepy
+# or 
+pip install -r requirements.txt
+```
+
+Ou tudo em uma linha:
+
+```bash
+python -m pip install tensorflow==1.15 numpy scipy imageio pillow moviepy
+```
+
+Use um datataset de imagens pronto para treinar contem +80k de fotos.
+
+```bash
+./setup.sh
+```
+
+---
+
+## 🚀 Como usar
+
+### 🔧 Etapa 1 — Treinamento
+
+Com apenas o estilo:
+
+```bash
+python style.py --checkpoint-dir checkpoints/ghibli_model --style styles/ghibli.png --epochs 1 --batch-size 2
+```
+
+Ou com imagens de treino personalizadas:
+
+```bash
+python style.py --checkpoint-dir checkpoints/ghibli_model --style styles/ghibli.png --train-path train_data --epochs 1 --batch-size 2
+```
+
+---
+
+### 🎨 Etapa 2 — Aplicar o estilo
+
+```bash
+python evaluate.py --checkpoint checkpoints/ghibli_model --in-path content/dog.jpg --out-path results/output.png
+```
+
+---
+## 🖼️ Exemplo: Antes e Depois
+
+| 📷 **Original**                  | 🧾 **Estilo**                | 🎨 **Resultado (Ghibli)**  |
+| -------------------------------- | ---------------------------- | -------------------------- |
+| ![original](content/dog.jpg)     | ![style](styles/ghibli.png) | ![after](docs/output2.png) |
+| ![original](content/chicago.jpg) | ![style](styles/ghibli.png) | ![after](docs/output.png)  |
+
+> A imagem original (à esquerda) é estilizada com a imagem do estilo `ghibli.png`, resultando na imagem à direita.
+
+## 🧠 Notas
+
+* Se ocorrer erro com `scipy.misc`, edite o código e substitua por `imageio` e `Pillow`.
+* O projeto foi feito para TensorFlow **1.x** e pode não funcionar corretamente com TensorFlow 2.x ou Python > 3.10.
+* Certifique-se de que os arquivos `.py` estejam na pasta `src/` conforme a estrutura acima.
+
+## Usando Google Colab
+![style](docs/aa.png)
+Use de exemplo arquivo `exe.ipynb`
+
+---
+
+## 📄 Licença
+
+MIT — sinta-se livre para usar, estudar e modificar.

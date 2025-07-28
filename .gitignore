@@ -1,12 +1,110 @@
-# Ignorar tudo dentro da pasta style
-/datasets/style/*
+t Byte-compiled / optimized / DLL files
+deps.txt
+archive
+saver
+*~
+pngs
+preds
 
-# Manter o .gitkeep para a pasta style (para garantir que a pasta seja versionada mesmo vazia)
-!/datasets/style/.gitkeep
+*.sw*
+data
+__pycache__/
+*.py[cod]
+*$py.class
 
-# Pode fazer o mesmo para content, se quiser
-/datasets/content/*
-!/datasets/content/.gitkeep
+# C extensions
+*.so
 
-test_output.jpg
-tf-env
+# Distribution / packaging
+.Python
+env/
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+*.egg-info/
+.installed.cfg
+*.egg
+
+# PyInstaller
+#  Usually these files are written by a python script from a template
+#  before PyInstaller builds the exe, so as to inject date/other infos into it.
+*.manifest
+*.spec
+
+# Installer logs
+pip-log.txt
+pip-delete-this-directory.txt
+
+# Unit test / coverage reports
+htmlcov/
+.tox/
+.coverage
+.coverage.*
+.cache
+nosetests.xml
+coverage.xml
+*,cover
+.hypothesis/
+
+# Translations
+*.mo
+*.pot
+
+# Django stuff:
+*.log
+local_settings.py
+
+# Flask stuff:
+instance/
+.webassets-cache
+
+# Scrapy stuff:
+.scrapy
+
+# Sphinx documentation
+docs/_build/
+
+# PyBuilder
+target/
+
+# IPython Notebook
+.ipynb_checkpoints
+
+# pyenv
+.python-version
+
+# celery beat schedule file
+celerybeat-schedule
+
+# dotenv
+.env
+
+# virtualenv
+venv/
+ENV/
+faststyle-env
+
+# Spyder project settings
+.spyderproject
+
+# Rope project settings
+.ropeproject
+
+# PyCharm
+.idea
+
+# checkpoint
+checkpoint
+
+# Ignorar todos os arquivos .ckpt
+*.ckpt.meta
+*.ckpt.index
+*.ckpt.data-00000-of-00001
